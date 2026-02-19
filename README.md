@@ -45,11 +45,27 @@ VITE_SUPABASE_ANON_KEY=tu_anon_key_de_supabase
 - **Logout:** Funcionalidad de cierre de sesión que invalida el token actual.
 - **Persistencia de Sesión:** El estado de autenticación se mantiene activo incluso después de recargar la página, gestionado automáticamente por el cliente de Supabase.
 
-## Estructura de Archivos Relevantes
+## Nuevas Funcionalidades - Sprint 2 (Frontend Mock)
 
-- `src/lib/supabaseClient.js`: Inicialización y configuración del cliente de Supabase usando las variables de entorno.
-- `src/components/Auth.jsx`: Componente que gestiona la interfaz de usuario para el inicio de sesión, registro y cierre de sesión.
-- `src/App.jsx`: Componente principal que integra el contexto de autenticación y renderiza la vista condicionalmente basada en la sesión del usuario.
+Se han implementado las interfaces de usuario para el sistema de salas en tiempo real:
+
+- **Lobby:** Dashboard principal donde los usuarios pueden ver salas disponibles y crear nuevas. Incluye un diseño moderno con fondo animado de estrellas.
+- **Room:** Sala de espera interactiva con sincronización visual de estado. Muestra a los usuarios conectados y el estado de la conexión en tiempo real.
+
+## Estructura de Archivos Actualizada
+
+- `src/components/Lobby.jsx`: Componente de Dashboard principal.
+- `src/components/Room.jsx`: Componente de Sala individual.
+- `src/components/Lobby.css`: Estilos específicos del Lobby.
+- `src/components/Room.css`: Estilos específicos de la Sala.
+- `src/components/Auth.jsx`: Componente de autenticación.
+- `src/App.jsx`: Orquestador principal de navegación.
+
+## Próximos Pasos
+
+1.  **Integración Realtime:** Reemplazar los datos mock con suscripciones reales a Supabase (`supabase.channel`).
+2.  **Base de Datos:** Conectar la creación y unión de salas con la tabla `rooms` en Supabase.
+3.  **Presencia:** Implementar Supabase Presence para sincronizar el estado de los usuarios conectados en tiempo real.
 
 ## Base de Datos (SQL)
 

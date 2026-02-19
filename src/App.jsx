@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './lib/supabaseClient'
 import Auth from './components/Auth'
+import Lobby from './components/Lobby'
+import Room from './components/Room'
 import './App.css'
 
 function App() {
   const [session, setSession] = useState(null)
+  const [currentRoom, setCurrentRoom] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -24,6 +27,15 @@ function App() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
+    setCurrentRoom(null) // Limpiar estado de sala al salir
+  }
+
+  const handleJoinRoom = (room) => {
+    setCurrentRoom(room)
+  }
+
+  const handleLeaveRoom = () => {
+    setCurrentRoom(null)
   }
 
   if (loading) {
@@ -39,28 +51,20 @@ function App() {
   }
 
   return (
-    <div className="container" style={{ padding: '50px 0 100px 0' }}>
-      <h1>¡Bienvenido!</h1>
-      <div style={{ margin: '20px 0' }}>
-        <p>Has iniciado sesión como:</p>
-        <p><strong>{session.user.email}</strong></p>
-      </div>
-      
-      <button 
-        className="button block" 
-        onClick={handleLogout}
-        style={{
-          padding: '10px 20px',
-          backgroundColor: '#ff4d4f',
-          color: 'white',
-          border: 'none',
-          borderRadius: '5px',
-          cursor: 'pointer',
-          fontWeight: 'bold'
-        }}
-      >
-        Cerrar Sesión
-      </button>
+    <div className="app-container">
+      {currentRoom ? (
+        <Room 
+          room={currentRoom} 
+          session={session} 
+          onLeaveRoom={handleLeaveRoom} 
+        />
+      ) : (
+        <Lobby 
+          session={session} 
+          onJoinRoom={handleJoinRoom} 
+          onLogout={handleLogout} 
+        />
+      )}
     </div>
   )
 }
