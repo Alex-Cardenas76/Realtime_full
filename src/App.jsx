@@ -56,7 +56,7 @@ function App() {
     };
 
     if (loading) {
-        return <div className="loading-screen">Loading...</div>;
+        return <div className="loading-screen">Cargando...</div>;
     }
 
     if (!session) {
@@ -79,7 +79,7 @@ function App() {
                             </div>
                             <button className="sign-out-btn" onClick={() => supabase.auth.signOut()}>
                                 <LogOut size={18} />
-                                <span>Sign Out</span>
+                                <span>Cerrar Sesión</span>
                             </button>
                         </div>
                     </div>

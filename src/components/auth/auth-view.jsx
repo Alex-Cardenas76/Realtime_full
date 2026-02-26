@@ -22,7 +22,7 @@ export default function Auth() {
 
                 const result = await AuthService.signUp(email, password, username);
                 if (!result.success) throw new Error(result.error);
-                alert('Check your email for the confirmation link!');
+                alert('¡Revisa tu correo para el enlace de confirmación!');
             } else {
                 const result = await AuthService.signIn(email, password);
                 if (!result.success) throw new Error(result.error);
@@ -41,8 +41,8 @@ export default function Auth() {
                     <div className="logo-icon">
                         <Sparkles size={32} color="#8b5cf6" />
                     </div>
-                    <h1>{isSignUp ? 'Create an Account' : 'Welcome Back'}</h1>
-                    <p>{isSignUp ? 'Join the community and start matching' : 'Sign in to access your dashboard'}</p>
+                    <h1>{isSignUp ? 'Crear una Cuenta' : 'Bienvenido'}</h1>
+                    <p>{isSignUp ? 'Únete a la comunidad y empieza a jugar' : 'Inicia sesión para acceder a tu panel'}</p>
                 </div>
 
                 {error && <div className="error-message">{error}</div>}
@@ -50,13 +50,13 @@ export default function Auth() {
                 <form className="auth-form" onSubmit={handleAuth}>
                     {isSignUp && (
                         <div className="form-group slide-in">
-                            <label htmlFor="username">Username</label>
+                            <label htmlFor="username">Nombre de Usuario</label>
                             <div className="input-wrapper">
                                 <User size={18} />
                                 <input
                                     id="username"
                                     type="text"
-                                    placeholder="Enter your username"
+                                    placeholder="Ingresa tu nombre de usuario"
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
                                     required={isSignUp}
@@ -66,13 +66,13 @@ export default function Auth() {
                     )}
 
                     <div className="form-group">
-                        <label htmlFor="email">Email Address</label>
+                        <label htmlFor="email">Correo Electrónico</label>
                         <div className="input-wrapper">
                             <Mail size={18} />
                             <input
                                 id="email"
                                 type="email"
-                                placeholder="name@example.com"
+                                placeholder="nombre@ejemplo.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
@@ -81,7 +81,7 @@ export default function Auth() {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="password">Password</label>
+                        <label htmlFor="password">Contraseña</label>
                         <div className="input-wrapper">
                             <Lock size={18} />
                             <input
@@ -100,7 +100,7 @@ export default function Auth() {
                             <Loader2 className="spinner" size={20} />
                         ) : (
                             <>
-                                {isSignUp ? 'Sign Up' : 'Sign In'}
+                                {isSignUp ? 'Registrarse' : 'Iniciar Sesión'}
                                 <ArrowRight size={18} />
                             </>
                         )}
@@ -109,7 +109,7 @@ export default function Auth() {
 
                 <div className="auth-footer">
                     <p>
-                        {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+                        {isSignUp ? '¿Ya tienes una cuenta?' : "¿No tienes una cuenta?"}{' '}
                         <button
                             className="auth-toggle"
                             onClick={() => {
@@ -120,7 +120,7 @@ export default function Auth() {
                                 setError(null);
                             }}
                         >
-                            {isSignUp ? 'Sign In' : 'Sign Up'}
+                            {isSignUp ? 'Iniciar Sesión' : 'Registrarse'}
                         </button>
                     </p>
                 </div>

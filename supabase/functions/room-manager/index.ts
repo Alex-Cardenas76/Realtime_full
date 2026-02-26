@@ -32,10 +32,12 @@ serve(async (req: Request) => {
         )
 
         // 3. Get User from JWT (Identity check)
-        const { data: { user }, error: authError } = await supabaseClient.auth.getUser()
+        const jwt = authHeader.replace('Bearer ', '');
+        const { data: { user }, error: authError } = await supabaseClient.auth.getUser(jwt)
         if (authError || !user) {
+            console.error(`[${requestId}] Auth Error:`, authError);
             return new Response(
-                JSON.stringify({ error: 'Invalid or expired token', requestId }),
+                JSON.stringify({ error: 'Invalid or expired token', details: authError, requestId }),
                 { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
             );
         }

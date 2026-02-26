@@ -20,9 +20,13 @@ export default function Room({ room, session, onLeave }) {
         const participantSub = RoomService.subscribeToParticipants(room.id, (payload) => {
             roomLogger.debug('Realtime Participant Event', payload);
             if (payload.eventType === 'INSERT') {
-                setParticipants((prev) => [...prev, payload.new]);
+                setParticipants((prev) => {
+                    // Evitar duplicados si el realtime se dispara múltiples veces o la data ya existía
+                    if (prev.some(p => p.user_id === payload.new.user_id)) return prev;
+                    return [...prev, payload.new];
+                });
             } else if (payload.eventType === 'DELETE') {
-                setParticipants((prev) => prev.filter((p) => p.user_id !== payload.old.user_id));
+                setParticipants((prev) => prev.filter((p) => p.id !== payload.old.id));
             }
         });
 
@@ -99,12 +103,12 @@ export default function Room({ room, session, onLeave }) {
             </div>
 
             <div className="participants-section">
-                <h3>Participants ({participants.length})</h3>
+                <h3>Participantes ({participants.length})</h3>
                 <ul className="participants-list">
                     {participants.map((p) => (
                         <li key={p.id} className="participant-item">
                             <Users size={16} />
-                            <span>{p.user_id === session.user.id ? 'You' : `User ${p.user_id.slice(0, 4)}`}</span>
+                            <span>{p.user_id === session.user.id ? 'Tú' : `Usuario ${p.user_id.slice(0, 4)}`}</span>
                         </li>
                     ))}
                 </ul>
@@ -113,27 +117,27 @@ export default function Room({ room, session, onLeave }) {
             <div className="room-content">
                 {status === 'waiting' && (
                     <div className="waiting-area">
-                        <p>Waiting for players...</p>
+                        <p>Esperando jugadores...</p>
                     </div>
                 )}
 
                 {status === 'ready' && (
                     <div className="ready-area">
-                        <p>Host is preparing to start...</p>
+                        <p>El anfitrión se prepara para iniciar...</p>
                     </div>
                 )}
 
                 {status === 'playing' && (
                     <div className="game-area">
-                        <h3>Game in Progress 🎮</h3>
+                        <h3>Juego en Curso 🎮</h3>
                         {/* Game Component Would Go Here */}
                     </div>
                 )}
 
                 {status === 'finished' && (
                     <div className="results-area">
-                        <h3>Match Finished 🏆</h3>
-                        <button onClick={() => handleUpdateStatus('waiting')} className="restart-btn">Play Again</button>
+                        <h3>Partida Finalizada 🏆</h3>
+                        <button onClick={() => handleUpdateStatus('waiting')} className="restart-btn">Jugar de Nuevo</button>
                     </div>
                 )}
             </div>
@@ -141,22 +145,22 @@ export default function Room({ room, session, onLeave }) {
             <div className="room-actions">
                 {isCreator && status === 'waiting' && (
                     <button onClick={() => handleUpdateStatus('ready')} className="action-btn" disabled={isUpdating}>
-                        {isUpdating ? 'Updating...' : 'Set Ready'}
+                        {isUpdating ? 'Actualizando...' : 'Marcar Listo'}
                     </button>
                 )}
                 {isCreator && status === 'ready' && (
                     <button onClick={() => handleUpdateStatus('playing')} className="start-btn" disabled={isUpdating}>
-                        <Play size={18} /> {isUpdating ? 'Starting...' : 'Start Match'}
+                        <Play size={18} /> {isUpdating ? 'Iniciando...' : 'Iniciar Partida'}
                     </button>
                 )}
                 {isCreator && status === 'playing' && (
                     <button onClick={() => handleUpdateStatus('finished')} className="end-btn" disabled={isUpdating}>
-                        {isUpdating ? 'Finishing...' : 'Finish Match'}
+                        {isUpdating ? 'Finalizando...' : 'Finalizar Partida'}
                     </button>
                 )}
 
                 <button onClick={handleLeave} className="leave-btn">
-                    <LogOut size={18} /> Leave Room
+                    <LogOut size={18} /> Salir de la Sala
                 </button>
             </div>
         </div>

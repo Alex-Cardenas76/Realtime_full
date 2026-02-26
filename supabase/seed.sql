@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS public.rooms (
     created_by UUID REFERENCES auth.users NOT NULL,
     name TEXT NOT NULL,
     category TEXT DEFAULT 'General',
-    status TEXT CHECK (status IN ('waiting', 'ready', 'playing', 'finished')) DEFAULT 'waiting',
+    status TEXT CHECK (status IN ('waiting', 'ready', 'playing', 'finished', 'cancelled')) DEFAULT 'waiting',
     max_participants INT DEFAULT 2 CHECK (max_participants > 0),
     created_at TIMESTAMPTZ DEFAULT now(),
     updated_at TIMESTAMPTZ DEFAULT now()
@@ -45,6 +45,9 @@ CREATE TABLE IF NOT EXISTS public.participants (
     joined_at TIMESTAMPTZ DEFAULT now(),
     UNIQUE(room_id, user_id)
 );
+
+-- Essential for true DELETE events in Realtime
+ALTER TABLE public.participants REPLICA IDENTITY FULL;
 
 ALTER TABLE public.participants ENABLE ROW LEVEL SECURITY;
 
@@ -98,3 +101,27 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Trigger should be linked to auth.users in the dashboard or via SQL
 -- Note: Trigger creation on auth schema often requires Superuser or special wrapper.
+
+-- 6. REALTIME PUBLICATIONS (Critical for UI reactivity)
+-- Ensure these tables broadcast changes over websockets
+BEGIN;
+  DROP PUBLICATION IF EXISTS supabase_realtime;
+  CREATE PUBLICATION supabase_realtime;
+COMMIT;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.rooms;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.participants;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.matches;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.swipes;
+
+-- ==========================================
+-- 7. EDGE FUNCTIONS DEPLOYMENT REQUIREMENT
+-- ==========================================
+-- Important: For the "Marcar Listo" and match lifecycle state transitions to work,
+-- you must manually deploy the `room-manager` Edge Function using the Supabase CLI.
+-- Run the following command from the root of the project:
+--
+-- npx supabase functions deploy room-manager --project-ref <your_project_id> --no-verify-jwt
+--
+-- The `--no-verify-jwt` flag is required because the Deno code handles its own secure JWT
+-- verification internally, and the API Gateway should not block the custom headers used by React.
+-- ==========================================

@@ -56,10 +56,11 @@ export default function RoomList({ session, onJoinRoom }) {
         }
     };
 
-    if (loading) return <p className="loading-text">Loading rooms...</p>;
+    if (loading) return <p className="loading-text">Cargando salas...</p>;
 
-    const myRooms = rooms.filter(room => room.created_by === session.user.id);
-    const availableRooms = rooms.filter(room => room.created_by !== session.user.id);
+    const activeRooms = rooms.filter(room => room.status !== 'cancelled');
+    const myRooms = activeRooms.filter(room => room.created_by === session.user.id);
+    const availableRooms = activeRooms.filter(room => room.created_by !== session.user.id);
 
     return (
         <div className="room-list-container">
@@ -80,7 +81,7 @@ export default function RoomList({ session, onJoinRoom }) {
                                 <div className="room-info">
                                     <div className="room-name-wrapper">
                                         <h4>{room.name}</h4>
-                                        <span className="owner-badge">Owner</span>
+                                        <span className="owner-badge">Propietario</span>
                                     </div>
                                     <div className="room-badges">
                                         <span className={`status-badge ${room.status}`}>{room.status}</span>

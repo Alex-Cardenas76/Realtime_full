@@ -6,6 +6,17 @@ SyncRoom es una plataforma de gestión de salas en tiempo real diseñada para se
 
 ---
 
+## ⚙️ Tecnologías Usadas
+
+El proyecto está construido sobre un stack moderno orientado a escalabilidad y reactividad:
+- **Core Frontend:** React 18, Vite (Empaquetador ultrarrápido).
+- **Estilos e UI:** Vanilla CSS moderno o Tailwind CSS (dependiendo del enfoque visual de cada componente), Lucide React (Iconografía geométrica).
+- **Backend as a Service (BaaS):** Supabase (PostgreSQL 15+).
+- **Tiempo Real:** Supabase Realtime (WebSockets nativos sobre PostgreSQL publication).
+- **Seguridad & Lógica Server-Side:** Supabase Edge Functions (Deno), Row Level Security (RLS) policies.
+- **Base de Datos:** PostgreSQL (Triggers, Functions, Constraints, Replica Identity Full).
+
+---
 ## 🏗️ 1. Arquitectura Profesional (Modular & Layered)
 
 El proyecto ha sido reestructurado siguiendo estándares de **Clean Architecture** y convenciones de **Next.js**, organizando el código por dominios de negocio y capas de responsabilidad.
@@ -90,6 +101,21 @@ Para garantizar la calidad, se incluyeron herramientas de simulación de fallos:
 ---
 
 ## 🚀 5. Ejecución
+
+### Requisitos Previos (Edge Functions)
+Para que el sistema de emparejamiento interactivo ("Marcar Listo", "Iniciar Partida") funcione localmente o en producción, necesitas desplegar la función del servidor.
+
+1. **Inicia sesión en Supabase CLI**:
+   ```bash
+   npx supabase login
+   ```
+2. **Despliega la función `room-manager`** conectándola a tu proyecto (Reemplaza con tu Reference ID):
+   ```bash
+   npx supabase functions deploy room-manager --project-ref bfphtvvufqoxehznjrtu --no-verify-jwt
+   ```
+   *(Nota: Usamos `--no-verify-jwt` porque la validación de identidad y tokens se realiza asíncronamente **dentro** del código de Deno para mayor flexibilidad, previniendo que la pasarela API rechace cabeceras personalizadas).*
+
+### Levantar el Entorno Local
 
 1.  **Variables de Entorno**:
     Crea un archivo `.env` con tus credenciales de Supabase:

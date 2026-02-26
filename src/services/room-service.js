@@ -170,13 +170,43 @@ export const RoomService = {
 
             roomLogger.info('leaveRoom called', { roomId, userId });
 
-            const { error } = await supabase
+            // Fetch room to check if user is the creator
+            const { data: room, error: fetchError } = await supabase
+                .from('rooms')
+                .select('created_by')
+                .eq('id', roomId)
+                .single();
+
+            if (fetchError) throw fetchError;
+
+            // If the user is the creator, cancel the room entirely
+            if (room.created_by === userId) {
+                roomLogger.info('Creator is leaving. Cancelling room...', { roomId });
+                const { error: cancelError } = await supabase
+                    .from('rooms')
+                    .update({ status: 'cancelled' })
+                    .eq('id', roomId);
+
+                if (cancelError) throw cancelError;
+
+                // Also delete the creator from the participants list so their UI updates
+                await supabase
+                    .from('participants')
+                    .delete()
+                    .eq('room_id', roomId)
+                    .eq('user_id', userId);
+
+                return { success: true, message: 'Room cancelled by creator' };
+            }
+
+            // Otherwise, just remove the participant
+            const { error: deleteError } = await supabase
                 .from('participants')
                 .delete()
                 .eq('room_id', roomId)
                 .eq('user_id', userId);
 
-            if (error) throw error;
+            if (deleteError) throw deleteError;
             roomLogger.info('User left room successfully', { roomId, userId });
             return { success: true };
         } catch (error) {

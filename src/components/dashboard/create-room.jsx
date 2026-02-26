@@ -30,7 +30,7 @@ export default function CreateRoom({ session, onRoomCreated }) {
             }
         } catch (err) {
             console.error('Error creating room:', err);
-            setError('Failed to create room. Please try again.');
+            setError('Error al crear la sala. Por favor, inténtalo de nuevo.');
         } finally {
             setLoading(false);
         }
@@ -38,11 +38,11 @@ export default function CreateRoom({ session, onRoomCreated }) {
 
     return (
         <div className="create-room-card">
-            <h3>Create a New Room</h3>
+            <h3>Crear una Nueva Sala</h3>
             <form onSubmit={handleCreateRoom} className="create-room-form">
                 <input
                     type="text"
-                    placeholder="Enter room name..."
+                    placeholder="Escribe el nombre de la sala..."
                     value={roomName}
                     onChange={(e) => setRoomName(e.target.value)}
                     disabled={loading}
@@ -60,7 +60,7 @@ export default function CreateRoom({ session, onRoomCreated }) {
                 </select>
                 <button type="submit" disabled={loading || !roomName.trim()} className="create-btn">
                     {loading ? <Loader2 className="animate-spin" size={18} /> : <Plus size={18} />}
-                    Create
+                    Crear
                 </button>
             </form>
             {error && <p className="error-text">{error}</p>}

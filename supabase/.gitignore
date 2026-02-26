@@ -2,3 +2,9 @@
 .branches
 .temp
 .env
+
+# Edge Functions
+**/node_modules/
+**/.env
+**/.env.*
+**/.vscode/

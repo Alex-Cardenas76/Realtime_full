@@ -18,9 +18,9 @@ class ErrorBoundary extends React.Component {
         if (this.state.hasError) {
             return (
                 <div className="error-boundary">
-                    <h2>Something went wrong.</h2>
-                    <p>{this.state.error?.message || 'An unexpected error occurred.'}</p>
-                    <button onClick={() => window.location.reload()}>Reload Page</button>
+                    <h2>Algo salió mal.</h2>
+                    <p>{this.state.error?.message || 'Ocurrió un error inesperado.'}</p>
+                    <button onClick={() => window.location.reload()}>Recargar Página</button>
                 </div>
             );
         }
